@@ -11,7 +11,7 @@ nbs_cat <-
 # 2010 only
 nbs_cat <- subset( nbs_cat , this_round == 4 )
 # download the microdata to your local computer
-lodown( "nbs" , nbs_cat )
+
 
 library(survey)
 
