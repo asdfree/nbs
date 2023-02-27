@@ -70,19 +70,19 @@ svyby( ~ one , ~ age_categories , nbs_design , unwtd.count )
 svytotal( ~ one , nbs_design )
 
 svyby( ~ one , ~ age_categories , nbs_design , svytotal )
-svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design )
+svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design , na.rm = TRUE )
 
-svyby( ~ r7_n_totssbenlastmnth_pub , ~ age_categories , nbs_design , svymean )
-svymean( ~ r7_c_hhsize_pub , nbs_design )
+svyby( ~ r7_n_totssbenlastmnth_pub , ~ age_categories , nbs_design , svymean , na.rm = TRUE )
+svymean( ~ r7_c_hhsize_pub , nbs_design , na.rm = TRUE )
 
-svyby( ~ r7_c_hhsize_pub , ~ age_categories , nbs_design , svymean )
-svytotal( ~ r7_n_totssbenlastmnth_pub , nbs_design )
+svyby( ~ r7_c_hhsize_pub , ~ age_categories , nbs_design , svymean , na.rm = TRUE )
+svytotal( ~ r7_n_totssbenlastmnth_pub , nbs_design , na.rm = TRUE )
 
-svyby( ~ r7_n_totssbenlastmnth_pub , ~ age_categories , nbs_design , svytotal )
-svytotal( ~ r7_c_hhsize_pub , nbs_design )
+svyby( ~ r7_n_totssbenlastmnth_pub , ~ age_categories , nbs_design , svytotal , na.rm = TRUE )
+svytotal( ~ r7_c_hhsize_pub , nbs_design , na.rm = TRUE )
 
-svyby( ~ r7_c_hhsize_pub , ~ age_categories , nbs_design , svytotal )
-svyquantile( ~ r7_n_totssbenlastmnth_pub , nbs_design , 0.5 )
+svyby( ~ r7_c_hhsize_pub , ~ age_categories , nbs_design , svytotal , na.rm = TRUE )
+svyquantile( ~ r7_n_totssbenlastmnth_pub , nbs_design , 0.5 , na.rm = TRUE )
 
 svyby( 
 	~ r7_n_totssbenlastmnth_pub , 
@@ -90,16 +90,17 @@ svyby(
 	nbs_design , 
 	svyquantile , 
 	0.5 ,
-	ci = TRUE 
+	ci = TRUE , na.rm = TRUE
 )
 svyratio( 
 	numerator = ~ r7_n_ssilastmnth_pub , 
 	denominator = ~ r7_n_totssbenlastmnth_pub , 
-	nbs_design 
+	nbs_design ,
+	na.rm = TRUE
 )
 sub_nbs_design <- subset( nbs_design , r7_c_curmedicare == 1 )
-svymean( ~ r7_n_totssbenlastmnth_pub , sub_nbs_design )
-this_result <- svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design )
+svymean( ~ r7_n_totssbenlastmnth_pub , sub_nbs_design , na.rm = TRUE )
+this_result <- svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design , na.rm = TRUE )
 
 coef( this_result )
 SE( this_result )
@@ -111,7 +112,8 @@ grouped_result <-
 		~ r7_n_totssbenlastmnth_pub , 
 		~ age_categories , 
 		nbs_design , 
-		svymean 
+		svymean ,
+		na.rm = TRUE 
 	)
 	
 coef( grouped_result )
@@ -119,12 +121,12 @@ SE( grouped_result )
 confint( grouped_result )
 cv( grouped_result )
 degf( nbs_design )
-svyvar( ~ r7_n_totssbenlastmnth_pub , nbs_design )
+svyvar( ~ r7_n_totssbenlastmnth_pub , nbs_design , na.rm = TRUE )
 # SRS without replacement
-svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design , deff = TRUE )
+svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design , na.rm = TRUE , deff = TRUE )
 
 # SRS with replacement
-svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design , deff = "replace" )
+svymean( ~ r7_n_totssbenlastmnth_pub , nbs_design , na.rm = TRUE , deff = "replace" )
 svyciprop( ~ male , nbs_design ,
 	method = "likelihood" )
 svyttest( r7_n_totssbenlastmnth_pub ~ male , nbs_design )
@@ -142,11 +144,11 @@ summary( glm_result )
 library(srvyr)
 nbs_srvyr_design <- as_survey( nbs_design )
 nbs_srvyr_design %>%
-	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub ) )
+	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub , na.rm = TRUE ) )
 
 nbs_srvyr_design %>%
 	group_by( age_categories ) %>%
-	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub ) )
+	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub , na.rm = TRUE ) )
 ex_4 <-
 	data.frame(
 		variable_label =
@@ -201,7 +203,7 @@ r3_design <-
 			factor(
 				r3_orgsampinfo_bstatus ,
 				levels = c( 2 , 3 , 1 ) ,
-				labels = c( 'ssdi' , 'concurrent' , 'ssi' )
+				labels = c( 'di_only' , 'concurrent' , 'ssi' )
 			)
 
 	)
@@ -218,15 +220,15 @@ for( i in seq( nrow( ex_4 ) ) ){
 	stopifnot(
 		all.equal( 
 			100 * as.numeric( round( coef( benefit_percent ) , 2 ) ) , 
-			as.numeric( ex_4[ i , c( 'di_only' , 'concurrent' , 'ssdi' ) ] )
+			as.numeric( ex_4[ i , c( 'di_only' , 'concurrent' , 'ssi' ) ] )
 		)
 	)
 	
 	ttest_formula <- as.formula( paste( ex_4[ i , 'variable_name' ] , "~ benefit_type" ) )
 	
-	ssdi_con_design <- subset( r3_design , benefit_type %in% c( 'ssdi' , 'concurrent' ) )
+	di_only_con_design <- subset( r3_design , benefit_type %in% c( 'di_only' , 'concurrent' ) )
 	
-	con_ttest <- svyttest( ttest_formula , ssdi_con_design )
+	con_ttest <- svyttest( ttest_formula , di_only_con_design )
 
 	stopifnot(
 		all.equal( 
@@ -235,9 +237,9 @@ for( i in seq( nrow( ex_4 ) ) ){
 		)
 	)
 	
-	ssdi_ssi_design <- subset( r3_design , benefit_type %in% c( 'ssdi' , 'ssi' ) )
+	di_only_ssi_design <- subset( r3_design , benefit_type %in% c( 'di_only' , 'ssi' ) )
 	
-	ssi_ttest <- svyttest( ttest_formula , ssdi_ssi_design )
+	ssi_ttest <- svyttest( ttest_formula , di_only_ssi_design )
 
 	stopifnot(
 		all.equal(
