@@ -147,7 +147,32 @@ nbs_srvyr_design %>%
 nbs_srvyr_design %>%
 	group_by( age_categories ) %>%
 	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub ) )
-
+ex_4 <-
+	data.frame(
+		variable_label =
+			c( 'coping with stress' , 'concentrating' , 
+			'getting around outside of the home' , 
+			'shopping for personal items' , 'preparing meals' , 
+			'getting into or out of bed' , 'bathing or dressing' , 
+			'getting along with others' , 
+			'getting around inside the house' , 'eating' ) ,
+		variable_name =
+			c( "r3_i60_i" , "r3_i59_i" , "r3_i47_i" , "r3_i53_i" , 
+			"r3_i55_i" , "r3_i49_i" , "r3_i51_i" , "r3_i61_i" , 
+			"r3_i45_i" , "r3_i57_i" ) ,
+		overall =
+			c( 61 , 58 , 47 , 39 , 37 , 34 , 30 , 27 , 23 , 14 ) ,
+		di_only =
+			c( 60 , 54 , 47 , 36 , 35 , 36 , 30 , 23 , 24 , 13 ) ,
+		concurrent =
+			c( 63 , 63 , 47 , 43 , 41 , 34 , 33 , 31 , 23 , 15 ) ,
+		concurrent_vs_di =
+			c( F , T , F , F , F , F , F , T , F , F ) ,
+		ssi =
+			c( 61 , 62 , 47 , 40 , 39 , 33 , 29 , 31 , 22 , 15 ) ,
+		ssi_vs_di =
+			c( F , T , F , F , F , F , F , T , F , F )
+	)
 r3_tf <- tempfile()
 
 r3_url <- "https://www.ssa.gov/disabilityresearch/documents/nbsr3pufstata.zip"
@@ -180,35 +205,6 @@ r3_design <-
 			)
 
 	)
-
-ex_4 <-
-	data.frame(
-		variable_label =
-			c( 'coping with stress' , 'concentrating' , 
-			'getting around outside of the home' , 
-			'shopping for personal items' , 'preparing meals' , 
-			'getting into or out of bed' , 'bathing or dressing' , 
-			'getting along with others' , 
-			'getting around inside the house' , 'eating' ) ,
-		variable_name =
-			c( "r3_i60_i" , "r3_i59_i" , "r3_i47_i" , "r3_i53_i" , 
-			"r3_i55_i" , "r3_i49_i" , "r3_i51_i" , "r3_i61_i" , 
-			"r3_i45_i" , "r3_i57_i" ) ,
-		overall_percentage =
-			c( 61 , 58 , 47 , 39 , 37 , 34 , 30 , 27 , 23 , 14 ) ,
-		di_only_percentage =
-			c( 60 , 54 , 47 , 36 , 35 , 36 , 30 , 23 , 24 , 13 ) ,
-		concurrent_percentage =
-			c( 63 , 63 , 47 , 43 , 41 , 34 , 33 , 31 , 23 , 15 ) ,
-		concurrent_vs_di =
-			c( F , T , F , F , F , F , F , T , F , F ) ,
-		ssi_percentage =
-			c( 61 , 62 , 47 , 40 , 39 , 33 , 29 , 31 , 22 , 15 ) ,
-		ssi_vs_di =
-			c( F , T , F , F , F , F , F , T , F , F )
-	)
-		
-
 for( i in seq( nrow( ex_4 ) ) ){
 
 	this_formula <- as.formula( paste( "~" , ex_4[ i , 'variable_name' ] ) )
@@ -222,7 +218,7 @@ for( i in seq( nrow( ex_4 ) ) ){
 	stopifnot(
 		all.equal( 
 			100 * as.numeric( round( coef( benefit_percent ) , 2 ) ) , 
-			as.numeric( ex_4[ i , grep( 'percentage' , names( ex_4 ) ) ] )
+			as.numeric( ex_4[ i , c( 'di_only' , 'concurrent' , 'ssdi' ) ] )
 		)
 	)
 	
