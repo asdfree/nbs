@@ -141,14 +141,6 @@ glm_result <-
 	)
 
 summary( glm_result )
-library(srvyr)
-nbs_srvyr_design <- as_survey( nbs_design )
-nbs_srvyr_design %>%
-	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub , na.rm = TRUE ) )
-
-nbs_srvyr_design %>%
-	group_by( age_categories ) %>%
-	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub , na.rm = TRUE ) )
 ex_4 <-
 	data.frame(
 		variable_label =
@@ -252,3 +244,11 @@ for( i in seq( nrow( ex_4 ) ) ){
 
 }
 
+library(srvyr)
+nbs_srvyr_design <- as_survey( nbs_design )
+nbs_srvyr_design %>%
+	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub , na.rm = TRUE ) )
+
+nbs_srvyr_design %>%
+	group_by( age_categories ) %>%
+	summarize( mean = survey_mean( r7_n_totssbenlastmnth_pub , na.rm = TRUE ) )
