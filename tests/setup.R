@@ -19,9 +19,9 @@ nbs_df[ , 'one' ] <- 1
 # nbs_fn <- file.path( path.expand( "~" ) , "NBS" , "this_file.rds" )
 # saveRDS( nbs_df , file = nbs_fn , compress = FALSE )
 # nbs_df <- readRDS( nbs_fn )
-options( survey.lonely.psu = "adjust" )
-
 library(survey)
+
+options( survey.lonely.psu = "adjust" )
 
 # representative beneficiary sample
 nbs_design <-
