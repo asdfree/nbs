@@ -5,7 +5,7 @@ library(haven)
 
 zip_tf <- tempfile()
 
-zip_url <- "https://www.ssa.gov/disabilityresearch/documents/R7NBSPUF_STATA.zip"
+zip_url <- "https://www.ssaresearch.net/_files/archives/fb3647_03092b46ba3243579f0759ed6558e5aa.zip?dn=r7nbspuf112122_stata.zip"
 	
 download.file( zip_url , zip_tf , mode = 'wb' )
 
@@ -169,7 +169,7 @@ ex_4 <-
 	)
 r3_tf <- tempfile()
 
-r3_url <- "https://www.ssa.gov/disabilityresearch/documents/nbsr3pufstata.zip"
+r3_url <- "https://www.ssaresearch.net/_files/archives/fb3647_95038c382cbd454aa3c4ce24f4644495.zip?dn=nbsr3pufstata.zip"
 	
 download.file( r3_url , r3_tf , mode = 'wb' )
 
